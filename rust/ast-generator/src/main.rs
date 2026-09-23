@@ -80,6 +80,8 @@ fn should_node_be_skipped(name: &str) -> bool {
 
 fn should_node_be_skipped_in_extractor(name: &str) -> bool {
     name == "Adt" // no fields have `Adt` type, so we don't need extraction for it
+    || name == "AnyAttr" // no fields have `AnyAttr` type
+    || name == "DocComment" // doc comments are not extracted yet
 }
 
 fn should_field_be_skipped(node_name: &str, field_name: &str) -> bool {
@@ -473,7 +475,12 @@ fn write_extractor(grammar: &AstSrc, mustache_ctx: &mustache::Context) -> mustac
             .filter(|e| !should_node_be_skipped_in_extractor(&e.name))
             .map(enum_to_extractor_info)
             .collect(),
-        nodes: grammar.nodes.iter().map(node_to_extractor_info).collect(),
+        nodes: grammar
+            .nodes
+            .iter()
+            .filter(|n| !should_node_be_skipped_in_extractor(&n.name))
+            .map(node_to_extractor_info)
+            .collect(),
     };
     let template = mustache_ctx.compile_path("extractor")?;
     let res = template.render_to_string(&extractor_info)?;
