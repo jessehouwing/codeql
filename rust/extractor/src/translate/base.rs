@@ -351,9 +351,14 @@ impl<'db> Translator<'db> {
         children: SyntaxElementChildren,
     ) {
         for child in children {
-            if let NodeOrToken::Token(token) = child
-                && token.kind() == SyntaxKind::COMMENT
-            {
+            let token = match child {
+                NodeOrToken::Token(token) if token.kind() == SyntaxKind::COMMENT => Some(token),
+                NodeOrToken::Node(node) if node.kind() == SyntaxKind::DOC_COMMENT => {
+                    node.first_token()
+                }
+                _ => None,
+            };
+            if let Some(token) = token {
                 let label = self.trap.emit(generated::Comment {
                     id: TrapId::Star,
                     parent: parent_label,

@@ -3383,6 +3383,7 @@ module Raw {
    * ```rust
    * // this is a comment
    * /// This is a doc comment
+   * fn documented() {}
    * ```
    */
   class Comment extends @comment, Token {

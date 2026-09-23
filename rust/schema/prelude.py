@@ -36,6 +36,7 @@ class Comment(Token):
     ```rust
     // this is a comment
     /// This is a doc comment
+    fn documented() {}
     ```
     """
     parent: AstNode
