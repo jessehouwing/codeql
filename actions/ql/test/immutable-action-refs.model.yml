@@ -1,0 +1,6 @@
+extensions:
+  - addsTo:
+      pack: codeql/actions-all
+      extensible: immutableActionRefsDataModel
+    data:
+      - ["foo/immutable-release", "v1.2.3"]

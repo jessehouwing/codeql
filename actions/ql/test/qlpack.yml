@@ -12,3 +12,4 @@ tests: .
 warnOnImplicitThis: true
 dataExtensions:
   - output-clobbering.model.yml
+  - immutable-action-refs.model.yml

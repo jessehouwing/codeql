@@ -127,6 +127,16 @@ predicate vulnerableActionsDataModel(
 predicate immutableActionsDataModel(string action) { Extensions::immutableActionsDataModel(action) }
 
 /**
+ * MaD models for actions/refs known to point to immutable releases
+ * Fields:
+ *    - action: action name (`owner/repo`, no sub-directory path)
+ *    - ref: tag name known to be an immutable release of `action`
+ */
+predicate immutableActionRefsDataModel(string action, string ref) {
+  Extensions::immutableActionRefsDataModel(action, ref)
+}
+
+/**
  * MaD models for trusted actions owners
  * Fields:
  *    - owner: owner name

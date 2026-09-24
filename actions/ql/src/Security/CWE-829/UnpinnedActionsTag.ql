@@ -13,6 +13,7 @@
 
 import actions
 import codeql.actions.security.UseOfUnversionedImmutableAction
+import codeql.actions.security.UseOfVersionedImmutableActionRef
 
 bindingset[version]
 private predicate isPinnedCommit(string version) {
@@ -69,6 +70,7 @@ where
     else isPinnedCommit(version)
   ) and
   not exists(UsesStep step | uses = step and isImmutableAction(step, nwo)) and
+  not exists(UsesStep step | uses = step and isImmutableActionRef(step, nwo, version)) and
   if uses instanceof ExternalJob
   then
     message =

@@ -1,0 +1,17 @@
+on:
+  pull_request
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+    # Known immutable release tag for this exact repo - should NOT be flagged.
+    - uses: foo/immutable-release@v1.2.3
+    # Known immutable release tag, referenced via a sub-directory action in the same repo
+    # (immutability is per repo+tag, not per sub-action) - should NOT be flagged.
+    - uses: foo/immutable-release/sub-action@v1.2.3
+    # Same repo, but a different (unknown) tag - should be flagged.
+    - uses: foo/immutable-release@v1.2.4
+    # Different repo entirely, unrelated to the data model - should be flagged.
+    - uses: foo/other-action@v1.2.3

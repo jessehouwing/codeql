@@ -64,6 +64,15 @@ extensible predicate vulnerableActionsDataModel(
 extensible predicate immutableActionsDataModel(string action);
 
 /**
+ * Holds for `(action, ref)` pairs where `ref` (a tag, e.g. `v1.2.3`) is known to point to an
+ * immutable release of `action`. `action` must be an `owner/repo` pair without any sub-directory
+ * path, since GitHub's immutable-release feature applies at the repository + tag level, not to
+ * individual actions within a monorepo-style repository (e.g. an entry for `owner/repo` with ref
+ * `v1.2.3` also covers `owner/repo/path/to/action@v1.2.3`).
+ */
+extensible predicate immutableActionRefsDataModel(string action, string ref);
+
+/**
  * Holds for trusted Actions owners.
  */
 extensible predicate trustedActionsOwnerDataModel(string owner);

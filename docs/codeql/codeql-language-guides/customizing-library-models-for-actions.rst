@@ -34,6 +34,7 @@ Customizing Actions-specific analysis:
 - ``contextTriggerDataModel(trigger, context_prefix)``
 - ``externallyTriggerableEventsDataModel(event)``
 - ``immutableActionsDataModel(action)``
+- ``immutableActionRefsDataModel(action, ref)``
 - ``poisonableActionsDataModel(action)``
 - ``poisonableCommandsDataModel(regexp)``
 - ``poisonableLocalScriptsDataModel(regexp, group)``
@@ -101,4 +102,23 @@ To distrust the first-party ``github`` owner, add a data extension file with the
          - ["!github"]
 
 With this in place, the query will once again report unpinned tags for Actions published by ``github``.
+
+Example: Suppress unpinned-tag alerts for Actions pinned to an immutable release tag
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+GitHub's `Immutable Releases and tags <https://docs.github.com/en/actions/how-tos/create-and-publish-actions/using-immutable-releases-and-tags-to-manage-your-actions-releases>`_ feature lets a repository owner make a specific tag/release immutable. Because this is a property of an individual tag rather than of a repository as a whole, and CodeQL analysis has no network access to query this at analysis time, this data must be supplied externally, for example by a pre-processing step that queries the GitHub GraphQL API for the ``immutable`` flag of each referenced release before analysis runs.
+
+Populate the ``immutableActionRefsDataModel`` extensible predicate with ``(action, ref)`` tuples for each action and tag confirmed to be immutable. ``action`` must be an ``owner/repo`` pair without any sub-directory path, since immutability applies at the repository + tag level (an entry for ``owner/repo`` also covers sub-directory actions such as ``owner/repo/path/to/action``):
+
+.. code-block:: yaml
+
+   extensions:
+     - addsTo:
+         pack: codeql/actions-all
+         extensible: immutableActionRefsDataModel
+       data:
+         - ["octodemo/3rd-party-action", "v1.2.3"]
+
+With this in place, the ``actions/unpinned-tag`` query will no longer report an alert for a step that uses ``octodemo/3rd-party-action@v1.2.3`` (or ``octodemo/3rd-party-action/some-subaction@v1.2.3``), since that specific tag is known to be immutable. Tags not present in the data model are still treated as mutable and continue to be flagged.
+
 
